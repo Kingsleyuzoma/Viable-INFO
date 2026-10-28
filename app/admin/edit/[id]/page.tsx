@@ -9,7 +9,6 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Link from 'next/link';
 
-
 export default function EditPostPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
