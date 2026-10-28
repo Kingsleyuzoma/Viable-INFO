@@ -69,10 +69,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
-          <p>&copy; {year} Viable INFO. All rights reserved.</p>
-          <p className="mt-2 sm:mt-0">Crafted for clean reading.</p>
-        </div>
+       
       </div>
     </footer>
   );
