@@ -36,7 +36,7 @@ export default function LatestArticles() {
   }, []);
 
   return (
-    <section id="latest" className="max-w-7xl mx-auto px-6 py-16 md:py-24">
+    <section id="latest" className="max-w-7xl mx-auto px-6 py-16 md:py-24 bg-white">
       <div className="flex items-end justify-between mb-10">
         <div>
           <h2 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">Latest Articles</h2>
