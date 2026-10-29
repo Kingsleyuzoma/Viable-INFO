@@ -307,9 +307,9 @@ export default function AdminDashboard() {
                         </button>
                       </div>
                     </div>
-                    <div className="p-4 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl border border-zinc-200/60 dark:border-zinc-700/60 text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap">
+                    <p className="p-4 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl border border-zinc-200/60 dark:border-zinc-700/60 text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap">
                       {msg.message}
-                    </div>
+                    </p>
                   </div>
                 ))}
               </div>
