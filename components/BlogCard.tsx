@@ -9,7 +9,7 @@ export default function BlogCard({ blog }: { blog: any }) {
     : 'Recent';
 
   return (
-    <article className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+    <article className="bg-white dark:bg-slate-900/80 dark:backdrop-blur-xl border border-zinc-200/80 dark:border-slate-800/80 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between group">
       <div>
         {/* Optional Image */}
         {blog.imageUrl && (
