@@ -1,45 +1,43 @@
-// app/blog/[id]/page.tsx
+// app/blog/[slug]/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation'; // You can remove this import now
 import { db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 
-// Notice we accept { params } directly as a prop from Next.js
-export default function SingleBlogPostPage({ params }: { params: { id: string } }) {
-  // Directly unwrap or use params.id
-  const [id, setId] = useState<string>('');
+export default function SingleBlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const [slug, setSlug] = useState<string>('');
   const [blog, setBlog] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Resolve params (in Next.js 15/16, params can sometimes be a Promise or object)
     async function unwrapParams() {
       const resolvedParams = await params;
-      const postId = resolvedParams?.id;
-      setId(postId);
+      const postSlug = resolvedParams?.slug;
+      setSlug(postSlug);
 
-      if (postId) {
-        fetchBlogPost(postId);
+      if (postSlug) {
+        fetchBlogPostBySlug(postSlug);
       }
     }
     unwrapParams();
   }, [params]);
 
-  const fetchBlogPost = async (postId: string) => {
+  const fetchBlogPostBySlug = async (postSlug: string) => {
     try {
-      const docRef = doc(db, 'blogs', postId);
-      const docSnap = await getDoc(docRef);
+      // Query Firestore for the document where the 'slug' field matches the URL
+      const q = query(collection(db, 'blogs'), where('slug', '==', postSlug));
+      const querySnapshot = await getDocs(q);
 
-      if (docSnap.exists()) {
+      if (!querySnapshot.empty) {
+        const docSnap = querySnapshot.docs[0];
         setBlog({ id: docSnap.id, ...docSnap.data() });
       } else {
         setBlog(null);
       }
     } catch (error) {
-      console.error('Error fetching blog post:', error);
+      console.error('Error fetching blog post by slug:', error);
     } finally {
       setLoading(false);
     }
@@ -57,15 +55,15 @@ export default function SingleBlogPostPage({ params }: { params: { id: string } 
     return (
       <div className="max-w-4xl mx-auto px-6 py-20 text-center">
         <h1 className="text-2xl font-bold mb-4 text-zinc-900 dark:text-white">Article not found</h1>
-        <Link href="/blog" className="text-blue-600 hover:underline">← Back to all articles</Link>
+        <Link href="/" className="text-blue-600 hover:underline">← Back to home</Link>
       </div>
     );
   }
 
   return (
     <article className="max-w-4xl mx-auto px-6 py-16">
-      <Link href="/blog" className="text-sm font-medium text-blue-600 hover:underline mb-8 inline-block">
-        ← Back to articles
+      <Link href="/" className="text-sm font-medium text-blue-600 hover:underline mb-8 inline-block">
+        ← Back to home
       </Link>
       
       <div className="mb-6">
@@ -76,13 +74,13 @@ export default function SingleBlogPostPage({ params }: { params: { id: string } 
           {blog.title}
         </h1>
         <p className="text-sm text-zinc-500">
-          Published on {blog.createdAt ? new Date(blog.createdAt.seconds * 1000).toLocaleDateString() : 'Recent'}
+          Published on {blog.createdAt?.toDate ? new Date(blog.createdAt.toDate()).toLocaleDateString() : 'Recent'}
         </p>
       </div>
 
-      {blog.imageUrl && (
+      {blog.image && (
         <div className="mb-10 overflow-hidden rounded-2xl shadow-lg max-h-[450px]">
-          <img src={blog.imageUrl} alt={blog.title} className="w-full h-full object-cover" />
+          <img src={blog.image} alt={blog.title} className="w-full h-full object-cover" />
         </div>
       )}
 

@@ -42,7 +42,7 @@ export default function BlogCard({ blog }: { blog: any }) {
 
       <div className="px-6 pb-6 pt-0">
         <Link 
-          href={`/blog/${blog.id}`} 
+          href={`/blog/${blog.slug}`} 
           className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
         >
           Read more <span>→</span>

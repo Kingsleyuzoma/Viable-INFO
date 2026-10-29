@@ -18,8 +18,6 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 
-
-
 export default function CreateBlogPage() {
   const router = useRouter();
 
@@ -45,6 +43,16 @@ export default function CreateBlogPage() {
     return () => unsubscribe();
   }, [router]);
 
+  // Helper function to turn a title into a clean URL slug (e.g., "My First Post!" -> "my-first-post")
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/[\s_-]+/g, '-')   // Replace spaces and underscores with hyphens
+      .replace(/^-+|-+$/g, '');   // Remove leading/trailing hyphens
+  };
+
   // CREATE BLOG
   const handleCreateBlog = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,13 +72,16 @@ export default function CreateBlogPage() {
         imageUrl = await getDownloadURL(imageRef);
       }
 
+      const slug = generateSlug(title);
+
       await addDoc(collection(db, "blogs"), {
         title,
+        slug, // <-- Saved automatically so URLs use clean titles instead of random IDs!
         description,
         content,
         category,
-        postType, // 'latest' for homepage grid / 'highlight' for banner cards
-        image: imageUrl, // image URL from storage
+        postType,
+        image: imageUrl,
         createdAt: serverTimestamp(),
       });
 
@@ -94,8 +105,6 @@ export default function CreateBlogPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col">
-      
-      
       <main className="flex-grow max-w-3xl mx-auto px-4 py-12 w-full mt-8">
         <div className="flex items-center justify-between mb-6">
           <Link href="/admin/dashboard" className="text-sm font-semibold text-emerald-600 hover:underline">

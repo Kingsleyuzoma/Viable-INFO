@@ -63,7 +63,7 @@ export default function HighlightInsights() {
                 </div>
 
                 <div className="mt-6">
-                  <Link href={`/blog/${item.id}`} className="text-sm font-medium hover:underline inline-flex items-center gap-1">
+                  <Link href={`/blog/${item.slug}`} className="text-sm font-medium hover:underline inline-flex items-center gap-1">
                     Read more →
                   </Link>
                 </div>
