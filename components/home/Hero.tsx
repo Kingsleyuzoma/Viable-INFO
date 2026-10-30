@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-linear-to-br from-zinc-900 via-black to-zinc-900 text-white py-24 md:py-32">
+    <section className="relative rounded-2xl overflow-hidden bg-linear-to-br from-zinc-900 via-black to-zinc-900 text-white py-24 md:py-32">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[50px_50px] opacity-30"></div>
      
