@@ -58,10 +58,10 @@ export default function Footer() {
                 <Link href="/blog?category=technology" className="hover:text-white transition">Technology</Link>
               </li>
               <li>
-                <Link href="/blog?category=web-dev" className="hover:text-white transition">Web Development</Link>
+                <Link href="/blog?category=FINANCE" className="hover:text-white transition">Finance</Link>
               </li>
               <li>
-                <Link href="/blog?category=trends" className="hover:text-white transition">Digital Trends</Link>
+                <Link href="/blog?category=HEALTH" className="hover:text-white transition">Health</Link>
               </li>
             </ul>
           </div>
