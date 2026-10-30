@@ -105,7 +105,7 @@ export default function CreateBlogPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col">
-      <main className="flex-grow max-w-3xl mx-auto px-4 py-12 w-full mt-8">
+      <main className="grow max-w-3xl mx-auto px-4 py-12 w-full mt-8">
         <div className="flex items-center justify-between mb-6">
           <Link href="/admin/dashboard" className="text-sm font-semibold text-emerald-600 hover:underline">
             &larr; Back to Dashboard

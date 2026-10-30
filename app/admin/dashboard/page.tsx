@@ -246,7 +246,7 @@ export default function AdminDashboard() {
 
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/blog/${post.id}`}
+                        href={`/blog/${post.slug}`}
                         target="_blank"
                         className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-xs font-medium rounded-lg transition"
                       >
