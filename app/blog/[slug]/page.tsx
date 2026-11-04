@@ -9,6 +9,11 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+// 🛑 TELL NEXT.JS NOT TO PRERENDER SLUGS AT BUILD TIME
+export async function generateStaticParams() {
+  return [];
+}
+
 // 1. DYNAMIC SEO METADATA FOR GOOGLE & SOCIAL SHARING
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
@@ -51,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Separate internal content component to satisfy Next.js Suspense requirements
+// Separate internal content component
 async function BlogContent({ slug }: { slug: string }) {
   let post: any = null;
   try {
@@ -98,7 +103,7 @@ async function BlogContent({ slug }: { slug: string }) {
       </div>
 
       {post.image && (
-        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-[450px]">
+        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-112.5">
           <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
         </div>
       )}
