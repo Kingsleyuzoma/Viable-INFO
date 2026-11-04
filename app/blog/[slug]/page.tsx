@@ -4,7 +4,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import { connection } from 'next/server'; // 👈 Fixed: imported from 'next/server'
+import { connection } from 'next/server';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -14,6 +14,9 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
+
+  // 🟢 ADD THIS HERE: Tells Next.js that metadata generation happens at request-time
+  await connection();
 
   try {
     if (!slug || slug === '[slug]') {
@@ -61,7 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Separate internal content component
 async function BlogContent({ slug }: { slug: string }) {
-  // Explicitly declares request-time execution to prevent build time prerender errors
+  // Tells Next.js that component rendering happens at request-time
   await connection();
 
   if (!slug || slug === '[slug]') {
