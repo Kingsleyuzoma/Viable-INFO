@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
-export const dynamicParams = true;
-
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -17,10 +15,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const resolvedParams = await params;
     const slug = resolvedParams?.slug;
 
-    if (!slug) {
+    // Skip database lookup if it's a build-time placeholder
+    if (!slug || slug === '[slug]') {
       return {
         title: 'Viable INFO | Inform. Educate. Empower.',
-        description: 'Explore useful knowledge and practical insights.',
+        description: 'Explore useful knowledge, practical insights, and informative articles on Viable INFO.',
       };
     }
 
