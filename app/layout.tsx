@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Vaiable INFO | Inform. Educate. Empower.",
-  description: "Explore useful knowledge and practical insights, and information that helps you make better-informed decisions.",
+  description: "Your destination for useful knowledge, practical insights, and information that helps you make better-informed decisions.",
   metadataBase: new URL("https://viable-info.vercel.app"),
 };
 
