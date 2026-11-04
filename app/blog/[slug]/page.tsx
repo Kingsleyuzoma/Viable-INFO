@@ -3,9 +3,7 @@ import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 import { Metadata } from 'next';
-
-// 🛑 TELL VERCEL TO RENDER THIS DYNAMICALLY AT REQUEST TIME
-export const dynamic = 'force-dynamic';
+import { Suspense } from 'react';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -53,11 +51,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// 2. SERVER COMPONENT FOR THE PAGE CONTENT
-export default async function BlogPostPage({ params }: Props) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
-
+// Separate internal content component to satisfy Next.js Suspense requirements
+async function BlogContent({ slug }: { slug: string }) {
   let post: any = null;
   try {
     const q = query(collection(db, 'blogs'), where('slug', '==', slug));
@@ -103,7 +98,7 @@ export default async function BlogPostPage({ params }: Props) {
       </div>
 
       {post.image && (
-        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-112.5">
+        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-[450px]">
           <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
         </div>
       )}
@@ -112,5 +107,17 @@ export default async function BlogPostPage({ params }: Props) {
         {post.content}
       </div>
     </article>
+  );
+}
+
+// 2. MAIN SERVER COMPONENT WITH SUSPENSE WRAPPER
+export default async function BlogPostPage({ params }: Props) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
+
+  return (
+    <Suspense fallback={<div className="max-w-3xl mx-auto px-6 py-20 text-center text-zinc-400">Loading article...</div>}>
+      <BlogContent slug={slug} />
+    </Suspense>
   );
 }
