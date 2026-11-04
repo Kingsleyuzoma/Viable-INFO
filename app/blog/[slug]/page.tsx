@@ -5,21 +5,25 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
+export const dynamicParams = true;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-// 🛑 TELL NEXT.JS NOT TO PRERENDER SLUGS AT BUILD TIME
-export async function generateStaticParams() {
-  return [];
-}
-
-// 1. DYNAMIC SEO METADATA FOR GOOGLE & SOCIAL SHARING
+// 1. SAFE DYNAMIC SEO METADATA (Will never crash the build)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
-
   try {
+    const resolvedParams = await params;
+    const slug = resolvedParams?.slug;
+
+    if (!slug) {
+      return {
+        title: 'Viable INFO | Inform. Educate. Empower.',
+        description: 'Explore useful knowledge and practical insights.',
+      };
+    }
+
     const q = query(collection(db, 'blogs'), where('slug', '==', slug));
     const querySnapshot = await getDocs(q);
 
@@ -28,10 +32,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       const siteUrl = 'https://viable-info.vercel.app';
 
       return {
-        title: `${post.title} | Viable INFO`,
+        title: `${post.title || 'Article'} | Viable INFO`,
         description: post.description || 'Explore useful knowledge, practical insights, and informative articles on Viable INFO.',
         openGraph: {
-          title: post.title,
+          title: post.title || 'Viable INFO',
           description: post.description || 'Explore useful knowledge and practical insights.',
           url: `${siteUrl}/blog/${slug}`,
           siteName: 'Viable INFO',
@@ -40,14 +44,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
         twitter: {
           card: 'summary_large_image',
-          title: post.title,
-          description: post.description,
+          title: post.title || 'Viable INFO',
+          description: post.description || 'Explore useful knowledge and practical insights.',
           images: post.image ? [post.image] : [],
         },
       };
     }
   } catch (error) {
-    console.error('Error generating metadata:', error);
+    console.error('Error generating metadata during build/request:', error);
   }
 
   return {
@@ -68,7 +72,7 @@ async function BlogContent({ slug }: { slug: string }) {
       post = { id: docSnap.id, ...docSnap.data() };
     }
   } catch (error) {
-    console.error('Error fetching post:', error);
+    console.error('Error fetching post content:', error);
   }
 
   if (!post) {
@@ -103,7 +107,7 @@ async function BlogContent({ slug }: { slug: string }) {
       </div>
 
       {post.image && (
-        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-112.5">
+        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-[450px]">
           <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
         </div>
       )}
@@ -115,7 +119,7 @@ async function BlogContent({ slug }: { slug: string }) {
   );
 }
 
-// 2. MAIN SERVER COMPONENT WITH SUSPENSE WRAPPER
+// 2. MAIN SERVER COMPONENT WITH SUSPENSE
 export default async function BlogPostPage({ params }: Props) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
