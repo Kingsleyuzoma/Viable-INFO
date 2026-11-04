@@ -11,11 +11,12 @@ type Props = {
 
 // 1. SAFE DYNAMIC SEO METADATA
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  try {
-    // Safely catch params promise rejection during build-time prerendering
-    const resolvedParams = await Promise.resolve(params).catch(() => null);
-    const slug = resolvedParams?.slug;
+  // Await params directly at the top so Next.js handles its build-time signals properly
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug;
 
+  try {
+    // Skip database lookup if it's a build-time placeholder
     if (!slug || slug === '[slug]') {
       return {
         title: 'Viable INFO | Inform. Educate. Empower.',
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
   } catch (error) {
-    console.error('Error generating metadata:', error);
+    console.error('Error fetching metadata from database:', error);
   }
 
   return {
@@ -126,9 +127,9 @@ async function BlogContent({ slug }: { slug: string }) {
   );
 }
 
-// 2. MAIN SERVER COMPONENT WITH SAFE PARAMS RESOLUTION
+// 2. MAIN SERVER COMPONENT
 export default async function BlogPostPage({ params }: Props) {
-  const resolvedParams = await Promise.resolve(params).catch(() => null);
+  const resolvedParams = await params;
   const slug = resolvedParams?.slug;
 
   return (
