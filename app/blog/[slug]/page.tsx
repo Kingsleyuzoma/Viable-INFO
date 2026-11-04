@@ -11,12 +11,10 @@ type Props = {
 
 // 1. SAFE DYNAMIC SEO METADATA
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // Await params directly at the top so Next.js handles its build-time signals properly
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
 
   try {
-    // Skip database lookup if it's a build-time placeholder
     if (!slug || slug === '[slug]') {
       return {
         title: 'Viable INFO | Inform. Educate. Empower.',
