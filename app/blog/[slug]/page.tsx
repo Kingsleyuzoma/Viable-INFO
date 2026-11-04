@@ -9,13 +9,13 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-// 1. SAFE DYNAMIC SEO METADATA (Will never crash the build)
+// 1. SAFE DYNAMIC SEO METADATA
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const resolvedParams = await params;
+    // Safely catch params promise rejection during build-time prerendering
+    const resolvedParams = await Promise.resolve(params).catch(() => null);
     const slug = resolvedParams?.slug;
 
-    // Skip database lookup if it's a build-time placeholder
     if (!slug || slug === '[slug]') {
       return {
         title: 'Viable INFO | Inform. Educate. Empower.',
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
   } catch (error) {
-    console.error('Error generating metadata during build/request:', error);
+    console.error('Error generating metadata:', error);
   }
 
   return {
@@ -61,6 +61,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Separate internal content component
 async function BlogContent({ slug }: { slug: string }) {
+  if (!slug || slug === '[slug]') {
+    return (
+      <div className="max-w-3xl mx-auto px-6 py-20 text-center text-zinc-400">
+        Loading article...
+      </div>
+    );
+  }
+
   let post: any = null;
   try {
     const q = query(collection(db, 'blogs'), where('slug', '==', slug));
@@ -118,14 +126,14 @@ async function BlogContent({ slug }: { slug: string }) {
   );
 }
 
-// 2. MAIN SERVER COMPONENT WITH SUSPENSE
+// 2. MAIN SERVER COMPONENT WITH SAFE PARAMS RESOLUTION
 export default async function BlogPostPage({ params }: Props) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+  const resolvedParams = await Promise.resolve(params).catch(() => null);
+  const slug = resolvedParams?.slug;
 
   return (
     <Suspense fallback={<div className="max-w-3xl mx-auto px-6 py-20 text-center text-zinc-400">Loading article...</div>}>
-      <BlogContent slug={slug} />
+      <BlogContent slug={slug || ''} />
     </Suspense>
   );
 }
