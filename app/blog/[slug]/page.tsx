@@ -6,6 +6,9 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { connection } from 'next/server';
 
+// 🟢 ADD THIS LINE: Tells the compiler that slugs are dynamic and handled on-demand
+export const dynamicParams = true;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -15,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
 
-  // 🟢 ADD THIS HERE: Tells Next.js that metadata generation happens at request-time
+  // Opt into request-time execution
   await connection();
 
   try {
@@ -64,7 +67,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Separate internal content component
 async function BlogContent({ slug }: { slug: string }) {
-  // Tells Next.js that component rendering happens at request-time
   await connection();
 
   if (!slug || slug === '[slug]') {
