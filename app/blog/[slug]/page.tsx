@@ -4,6 +4,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
+import { connection } from 'next/server'; // 👈 Fixed: imported from 'next/server'
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -60,6 +61,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Separate internal content component
 async function BlogContent({ slug }: { slug: string }) {
+  // Explicitly declares request-time execution to prevent build time prerender errors
+  await connection();
+
   if (!slug || slug === '[slug]') {
     return (
       <div className="max-w-3xl mx-auto px-6 py-20 text-center text-zinc-400">
