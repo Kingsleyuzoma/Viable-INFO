@@ -4,6 +4,9 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 import { Metadata } from 'next';
 
+// 🛑 TELL VERCEL TO RENDER THIS DYNAMICALLY AT REQUEST TIME
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -100,7 +103,7 @@ export default async function BlogPostPage({ params }: Props) {
       </div>
 
       {post.image && (
-        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-[450px]">
+        <div className="mb-10 overflow-hidden rounded-3xl shadow-lg max-h-112.5">
           <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
         </div>
       )}
