@@ -1,6 +1,4 @@
 // app/blog/[slug]/page.tsx
-'use client';
-
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
@@ -21,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!querySnapshot.empty) {
       const post = querySnapshot.docs[0].data();
-      const siteUrl = 'https://viable-info.vercel.app'; // Replace with your custom domain if you get one later
+      const siteUrl = 'https://viable-info.vercel.app';
 
       return {
         title: `${post.title} | Viable INFO`,
@@ -52,13 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// 2. CLIENT COMPONENT FOR THE PAGE CONTENT
-// (Note: We keep the main view client-side compatible or pass fetched data cleanly)
+// 2. SERVER COMPONENT FOR THE PAGE CONTENT
 export default async function BlogPostPage({ params }: Props) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
 
-  // Fetch post server-side for clean rendering and SEO parsing
   let post: any = null;
   try {
     const q = query(collection(db, 'blogs'), where('slug', '==', slug));
